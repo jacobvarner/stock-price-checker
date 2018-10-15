@@ -6,43 +6,102 @@
 *       (if additional are added, keep them at the very end!)
 */
 
-var chaiHttp = require('chai-http');
-var chai = require('chai');
-var assert = chai.assert;
-var server = require('../server');
+let chaiHttp = require('chai-http');
+let chai = require('chai');
+let assert = chai.assert;
+let server = require('../server');
 
 chai.use(chaiHttp);
 
-suite('Functional Tests', function() {
+suite('Functional Tests', () => {
     
-    suite('GET /api/stock-prices => stockData object', function() {
+    suite('GET /api/stock-prices => stockData object', () => {
       
-      test('1 stock', function(done) {
-       chai.request(server)
+      test('1 stock', (done) => {
+        chai.request(server)
         .get('/api/stock-prices')
         .query({stock: 'goog'})
-        .end(function(err, res){
-          
-          //complete this one too
-          
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.isObject(res.body);
+          assert.property(res.body, 'stock');
+          assert.property(res.body, 'price');
+          assert.property(res.body, 'likes');
+          assert.isString(res.body.stock);
+          assert.isString(res.body.price);
+          assert.isNumber(res.body.likes);
           done();
         });
       });
       
-      test('1 stock with like', function(done) {
-        
+      test('1 stock with like', (done) => {
+        chai.request(server)
+        .get('/api/stock-prices')
+        .query({ stock: 'goog', like: true })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.isObject(res.body);
+          assert.property(res.body, 'stock');
+          assert.property(res.body, 'price');
+          assert.property(res.body, 'likes');
+          assert.isString(res.body.stock);
+          assert.isString(res.body.price);
+          assert.isNumber(res.body.likes);
+          assert.equal(res.body.likes, 1);
+          done();
+        });
       });
       
-      test('1 stock with like again (ensure likes arent double counted)', function(done) {
-        
+      test('1 stock with like again (ensure likes arent double counted)', (done) => {
+        chai.request(server)
+        .get('/api/stock-prices')
+        .query({ stock: 'goog', like: true })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.isObject(res.body);
+          assert.property(res.body, 'stock');
+          assert.property(res.body, 'price');
+          assert.property(res.body, 'likes');
+          assert.isString(res.body.stock);
+          assert.isString(res.body.price);
+          assert.isNumber(res.body.likes);
+          assert.equal(res.body.likes, 1);
+          done();
+        });
       });
       
-      test('2 stocks', function(done) {
-        
+      test('2 stocks', (done) => {
+        chai.request(server)
+        .get('/api/stock-prices')
+        .query({ stock: 'goog', stock: 'msft' })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.isArray(res.body);
+          assert.property(res.body[0], 'stock');
+          assert.property(res.body[0], 'price');
+          assert.property(res.body[0], 'rel_likes');
+          assert.isString(res.body[0].stock);
+          assert.isString(res.body[0].price);
+          assert.isNumber(res.body[0].rel_likes);
+          done();
+        });
       });
       
-      test('2 stocks with like', function(done) {
-        
+      test('2 stocks with like', (done) => {
+        chai.request(server)
+        .get('/api/stock-prices')
+        .query({ stock: 'goog', stock: 'msft', like: true })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.isArray(res.body);
+          assert.property(res.body[0], 'stock');
+          assert.property(res.body[0], 'price');
+          assert.property(res.body[0], 'rel_likes');
+          assert.isString(res.body[0].stock);
+          assert.isString(res.body[0].price);
+          assert.isNumber(res.body[0].rel_likes);
+          done();
+        });
       });
       
     });
